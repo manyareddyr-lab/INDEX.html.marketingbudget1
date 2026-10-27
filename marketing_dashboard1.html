@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OptiMarketing AI - Marketing Budget Optimization Dashboard</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090d16;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+    .chart-tooltip {
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950 antialiased">
+
+  <!-- ================= TOP NAV HEADER ================= -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50 px-6 py-3.5 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="bg-gradient-to-tr from-emerald-500 to-teal-400 p-2 rounded-xl shadow-lg shadow-emerald-500/20 text-slate-950 font-bold flex items-center justify-center">
+        <!-- Cpu Icon -->
+        <svg class="w-5 h-5 text-slate-950" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="4" y="4" width="16" height="16" rx="2"/>
+          <rect x="9" y="9" width="6" height="6"/>
+          <path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="font-bold text-lg leading-none tracking-tight text-white flex items-center gap-2">
+          OptiMarketing AI 
+          <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            v2.4 Agentic Engine
+          </span>
+        </h1>
+        <p class="text-xs text-slate-400 mt-1">Marketing Budget Optimization &amp; Multi-Touch Attribution Suite</p>
+      </div>
+    </div>
+
+    <!-- Global Controls -->
+    <div class="flex items-center gap-3">
+      <div class="hidden md:flex items-center gap-2 bg-slate-800/80 border border-slate-700/60 rounded-lg px-3 py-1.5 text-xs">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="text-slate-300 font-medium">Model: Attribution Multi-Touch Engine v4</span>
+      </div>
+      <button 
+        id="btn-reset-global"
+        class="flex items-center gap-1.5 text-xs bg-slate-800 hover:bg-slate-700 active:bg-slate-600 border border-slate-700 text-slate-300 px-3 py-1.5 rounded-lg transition"
+      >
+        <!-- Refresh Icon -->
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+        Reset Baseline
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= MAIN LAYOUT ================= -->
+  <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+    
+    <!-- ================= SIDEBAR NAVIGATION ================= -->
+    <aside class="w-full md:w-64 bg-slate-900/50 border-r border-slate-800/80 p-4 flex flex-row md:flex-col gap-1.5 overflow-x-auto md:overflow-x-visible shrink-0">
+      <div class="text-xs font-bold uppercase tracking-wider text-slate-500 px-3 py-1 hidden md:block">
+        Analytics Modules
+      </div>
+
+      <button
+        data-tab="overview"
+        class="tab-btn active flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+      >
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M12 20V10M18 20V4M6 20v-4"/>
+        </svg>
+        <span>Executive Overview</span>
+      </button>
+
+      <button
+        data-tab="attribution"
+        class="tab-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left text-slate-400 hover:bg-slate-800/60 hover:text-slate-200"
+      >
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+          <polyline points="2 17 12 22 22 17"/>
+          <polyline points="2 12 12 17 22 12"/>
+        </svg>
+        <span>Attribution &amp; Channels</span>
+      </button>
+
+      <button
+        data-tab="simulator"
+        class="tab-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left text-slate-400 hover:bg-slate-800/60 hover:text-slate-200"
+      >
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <line x1="4" y1="21" x2="4" y2="14"/>
+          <line x1="4" y1="10" x2="4" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="12"/>
+          <line x1="12" y1="8" x2="12" y2="3"/>
+          <line x1="20" y1="21" x2="20" y2="16"/>
+          <line x1="20" y1="12" x2="20" y2="3"/>
+          <line x1="1" y1="14" x2="7" y2="14"/>
+          <line x1="9" y1="8" x2="15" y2="8"/>
+          <line x1="17" y1="16" x2="23" y2="16"/>
+        </svg>
+        <span>AI Budget Reallocator</span>
+      </button>
+
+      <button
+        data-tab="dataset"
+        class="tab-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left text-slate-400 hover:bg-slate-800/60 hover:text-slate-200"
+      >
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <ellipse cx="12" cy="5" rx="9" ry="3"/>
+          <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+        </svg>
+        <span>Synthetic Campaign Data</span>
+      </button>
+
+      <div class="text-xs font-bold uppercase tracking-wider text-slate-500 px-3 py-1 mt-4 hidden md:block">
+        AI &amp; Automation
+      </div>
+
+      <button
+        data-tab="antigravity"
+        class="tab-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left text-slate-400 hover:bg-slate-800/60 hover:text-slate-200"
+      >
+        <svg class="w-4 h-4 text-violet-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+        </svg>
+        <span>Anti-Gravity Prompt &amp; Docs</span>
+      </button>
+
+      <!-- Quick AI Agent Status Card -->
+      <div class="mt-auto hidden md:block bg-slate-900 border border-slate-800 rounded-xl p-3">
+        <div class="flex items-center gap-2 mb-2">
+          <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+          </svg>
+          <span class="text-xs font-semibold text-slate-200">AI Optimization Status</span>
+        </div>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Identified <span class="text-amber-400 font-bold">$125,000</span> inefficient spend in Programmatic Display.
+        </p>
+      </div>
+    </aside>
+
+    <!-- ================= MAIN CONTENT PANE ================= -->
+    <main class="flex-1 bg-slate-950 p-4 md:p-8 overflow-y-auto">
+      
+      <!-- ================= TAB 1: EXECUTIVE OVERVIEW ================= -->
+      <section id="pane-overview" class="tab-pane space-y-6 max-w-7xl mx-auto">
+        <!-- Briefing Banner -->
+        <div class="bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950 border border-indigo-500/20 rounded-2xl p-5 shadow-xl relative overflow-hidden">
+          <div class="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+            <svg class="w-48 h-48 text-indigo-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+              <polyline points="17 6 23 6 23 12"/>
+            </svg>
+          </div>
+          <div class="relative z-10">
+            <div class="flex items-center gap-2 text-indigo-400 text-xs font-bold tracking-wider uppercase mb-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/>
+                <circle cx="12" cy="12" r="6"/>
+                <circle cx="12" cy="12" r="2"/>
+              </svg>
+              Senior Data Analyst Intelligence Briefing
+            </div>
+            <h2 class="text-xl font-extrabold text-white">Marketing Capital Efficiency &amp; ROAS Diagnostic</h2>
+            <p class="text-xs text-slate-300 mt-2 max-w-3xl leading-relaxed">
+              Management currently lacks granular visibility into multi-touch attribution, causing <strong>$125k+</strong> to be spent on low-converting channels like Programmatic Display. This dashboard leverages an ML-driven multi-touch attribution model to project net revenue boosts by reallocating budget toward non-linear conversion paths.
+            </p>
+          </div>
+        </div>
+
+        <!-- Top Summary Metrics Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 shadow-lg">
+            <div class="flex justify-between items-start text-slate-400 text-xs mb-1">
+              <span>Total Monthly Budget</span>
+              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <line x1="12" y1="1" x2="12" y2="23"/>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+            </div>
+            <div id="stat-total-budget" class="text-2xl font-black text-white">$500,000</div>
+            <div class="text-xs text-slate-400 mt-1 flex items-center gap-1">
+              <span>Baseline: $500,000</span>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 shadow-lg">
+            <div class="flex justify-between items-start text-slate-400 text-xs mb-1">
+              <span>Projected Revenue</span>
+              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                <polyline points="17 6 23 6 23 12"/>
+              </svg>
+            </div>
+            <div id="stat-projected-rev" class="text-2xl font-black text-emerald-400">$945,000</div>
+            <div id="stat-rev-delta" class="text-xs text-emerald-400 mt-1 flex items-center gap-1 font-semibold">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <line x1="7" y1="17" x2="17" y2="7"/>
+                <polyline points="7 7 17 7 17 17"/>
+              </svg>
+              <span>+$0 vs Baseline</span>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 shadow-lg">
+            <div class="flex justify-between items-start text-slate-400 text-xs mb-1">
+              <span>Blended ROAS</span>
+              <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+            </div>
+            <div id="stat-blended-roas" class="text-2xl font-black text-white">1.89x</div>
+            <div class="text-xs text-amber-400 mt-1 flex items-center gap-1">
+              <span>Baseline: 1.89x ROAS</span>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 shadow-lg">
+            <div class="flex justify-between items-start text-slate-400 text-xs mb-1">
+              <span>Inefficient Spend Flagged</span>
+              <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
+            <div class="text-2xl font-black text-rose-400">$125,000</div>
+            <div class="text-xs text-rose-300/80 mt-1">25% of total budget wasted</div>
+          </div>
+        </div>
+
+        <!-- Main Visual Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Revenue & Spend Trajectory (Historical vs AI Optimization) -->
+          <div class="lg:col-span-2 bg-slate-900/80 border border-slate-800 rounded-xl p-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+              <div>
+                <h3 class="text-sm font-bold text-slate-100">Revenue &amp; Spend Trajectory (Historical vs AI Optimization)</h3>
+                <p class="text-xs text-slate-400">Projected impact after deploying AI Budget Reallocation</p>
+              </div>
+              <div class="flex items-center gap-4 text-xs">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-3 h-3 rounded bg-emerald-500"></span>
+                  <span class="text-slate-300">Revenue</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-3 h-3 rounded bg-indigo-500"></span>
+                  <span class="text-slate-300">Ad Spend</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Interactive SVG Area Chart -->
+            <div class="h-64 relative" id="historical-chart-container">
+              <!-- SVG chart will render here -->
+            </div>
+          </div>
+
+          <!-- AI Recommendation Stream Feed -->
+          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5 flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+                </svg>
+                AI Optimization Feed
+              </h3>
+              <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-semibold">
+                Live Suggestions
+              </span>
+            </div>
+
+            <div id="recommendations-container" class="space-y-3 overflow-y-auto flex-1 max-h-[290px] pr-1">
+              <!-- Rendered via JavaScript -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Bottom Channel Efficiency Table Quick View -->
+        <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5">
+          <h3 class="text-sm font-bold text-slate-100 mb-3">Channel Efficiency &amp; Profitability Diagnosis</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left text-slate-300">
+              <thead class="bg-slate-800/60 text-slate-400 uppercase font-semibold text-xs tracking-wider">
+                <tr>
+                  <th class="p-3">Channel</th>
+                  <th class="p-3">Current Budget</th>
+                  <th class="p-3">Blended ROAS</th>
+                  <th class="p-3">CAC ($)</th>
+                  <th class="p-3">LTV ($)</th>
+                  <th class="p-3">LTV : CAC Ratio</th>
+                  <th class="p-3">AI Diagnostic</th>
+                </tr>
+              </thead>
+              <tbody id="overview-channel-rows" class="divide-y divide-slate-800">
+                <!-- Dynamically rendered -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================= TAB 2: ATTRIBUTION & CHANNELS ================= -->
+      <section id="pane-attribution" class="tab-pane hidden space-y-6 max-w-7xl mx-auto">
+        <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5">
+          <h2 class="text-base font-bold text-white mb-1">Attribution Model Discrepancy Breakdown</h2>
+          <p class="text-xs text-slate-400 mb-4">
+            Single-touch models (First/Last) mask channel interaction pathways. Data-Driven Attribution reveals Programmatic Display is severely over-credited in traditional models.
+          </p>
+
+          <div class="flex items-center gap-5 mb-4 text-xs">
+            <div class="flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded bg-indigo-500"></span>
+              <span class="text-slate-300">First-Touch Model</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded bg-sky-400"></span>
+              <span class="text-slate-300">Last-Touch Model</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded bg-emerald-500"></span>
+              <span class="text-slate-300">AI Data-Driven Model</span>
+            </div>
+          </div>
+
+          <!-- Grouped Bar Chart -->
+          <div class="h-80 relative" id="attribution-chart-container">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Channel ROAS vs CAC Scatter/Bar Analysis -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5">
+            <h3 class="text-sm font-bold text-white mb-1">ROAS vs. CAC Matrix</h3>
+            <p class="text-xs text-slate-400 mb-3">Optimal quadrant: High ROAS, Low CAC (Top-Left)</p>
+            
+            <div class="h-64 relative" id="matrix-chart-container">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5 flex flex-col justify-between">
+            <div>
+              <h3 class="text-sm font-bold text-white mb-3">Attribution Insights &amp; Notes for Senior Data Analyst</h3>
+              <ul class="space-y-3 text-xs text-slate-300">
+                <li class="flex items-start gap-2.5 bg-slate-800/40 p-3 rounded-lg border border-slate-700/40">
+                  <svg class="w-4 h-4 text-rose-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                  </svg>
+                  <div>
+                    <strong class="text-white">Programmatic Display Over-Valuation:</strong> First-touch attributes $75k revenue to display ads, but Data-Driven attribution shows it only influences <strong>$25k</strong> in actual pipeline revenue.
+                  </div>
+                </li>
+                <li class="flex items-start gap-2.5 bg-slate-800/40 p-3 rounded-lg border border-slate-700/40">
+                  <svg class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+                  </svg>
+                  <div>
+                    <strong class="text-white">Email Lifecycle Efficiency:</strong> Email has a massive 5.4x ROAS with an ultra-low CAC ($18). Scaling budget here yields high margin incremental revenue.
+                  </div>
+                </li>
+                <li class="flex items-start gap-2.5 bg-slate-800/40 p-3 rounded-lg border border-slate-700/40">
+                  <svg class="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                    <polyline points="17 6 23 6 23 12"/>
+                  </svg>
+                  <div>
+                    <strong class="text-white">Paid Search High Intent:</strong> Paid Search is the strongest bottom-funnel converter. Moving Display dollars here yields maximum incremental profit.
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 3: AI BUDGET REALLOCATOR (SIMULATOR) ================= -->
+      <section id="pane-simulator" class="tab-pane hidden space-y-6 max-w-7xl mx-auto">
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-6 shadow-xl">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div>
+              <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <line x1="4" y1="21" x2="4" y2="14"/>
+                  <line x1="4" y1="10" x2="4" y2="3"/>
+                  <line x1="12" y1="21" x2="12" y2="12"/>
+                  <line x1="12" y1="8" x2="12" y2="3"/>
+                  <line x1="20" y1="21" x2="20" y2="16"/>
+                  <line x1="20" y1="12" x2="20" y2="3"/>
+                  <line x1="1" y1="14" x2="7" y2="14"/>
+                  <line x1="9" y1="8" x2="15" y2="8"/>
+                  <line x1="17" y1="16" x2="23" y2="16"/>
+                </svg>
+                Interactive Budget Reallocation Scenario Engine
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">
+                Drag sliders to adjust spend per channel. The simulation computes logarithmic diminishing returns in real time.
+              </p>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <button 
+                id="btn-reset-simulator"
+                class="text-xs bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-300 border border-slate-700 px-3 py-2 rounded-lg transition"
+              >
+                Reset to Baseline
+              </button>
+            </div>
+          </div>
+
+          <!-- Live Simulation Metric Header Bar -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-xl bg-slate-950 border border-slate-800 mb-8">
+            <div>
+              <span class="text-xs text-slate-400 uppercase font-semibold">Simulated Budget</span>
+              <div id="sim-total-budget" class="text-xl font-black text-white">$500,000</div>
+            </div>
+            <div>
+              <span class="text-xs text-slate-400 uppercase font-semibold">Projected Revenue</span>
+              <div id="sim-projected-rev" class="text-xl font-black text-emerald-400">$945,000</div>
+            </div>
+            <div>
+              <span class="text-xs text-slate-400 uppercase font-semibold">Projected ROAS</span>
+              <div id="sim-projected-roas" class="text-xl font-black text-amber-400">1.89x</div>
+            </div>
+            <div>
+              <span class="text-xs text-slate-400 uppercase font-semibold">Net Profit Change</span>
+              <div id="sim-profit-change" class="text-xl font-black text-emerald-400">+$0</div>
+            </div>
+          </div>
+
+          <!-- Channel Sliders Container -->
+          <div id="simulator-sliders-container" class="space-y-6">
+            <!-- Dynamically generated sliders -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 4: SYNTHETIC CAMPAIGN DATA ================= -->
+      <section id="pane-dataset" class="tab-pane hidden space-y-6 max-w-7xl mx-auto">
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-5 shadow-xl">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+            <div>
+              <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                  <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                  <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                </svg>
+                Synthetic Campaign Data Explorer
+              </h2>
+              <p class="text-xs text-slate-400">Granular campaign-level log generated for machine learning training &amp; validation.</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3">
+              <div class="relative">
+                <input 
+                  id="input-dataset-search"
+                  type="text"
+                  placeholder="Search campaign or channel..."
+                  class="bg-slate-950 border border-slate-800 text-xs text-white rounded-lg px-3 py-2 w-56 focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+
+              <select
+                id="select-dataset-segment"
+                class="bg-slate-950 border border-slate-800 text-xs text-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:border-indigo-500"
+              >
+                <option value="All">All Customer Segments</option>
+                <option value="Enterprise">Enterprise</option>
+                <option value="SMB">SMB</option>
+                <option value="B2C">B2C</option>
+              </select>
+
+              <button 
+                id="btn-export-json"
+                class="flex items-center gap-1.5 text-xs bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-semibold px-3 py-2 rounded-lg transition shadow-lg shadow-indigo-600/20"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Export JSON
+              </button>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto rounded-lg border border-slate-800">
+            <table class="w-full text-xs text-left text-slate-300">
+              <thead class="bg-slate-950 text-slate-400 uppercase text-xs tracking-wider border-b border-slate-800">
+                <tr>
+                  <th class="p-3">Campaign ID</th>
+                  <th class="p-3">Channel</th>
+                  <th class="p-3">Campaign Name</th>
+                  <th class="p-3">Spend ($)</th>
+                  <th class="p-3">ROAS</th>
+                  <th class="p-3">CAC ($)</th>
+                  <th class="p-3">LTV ($)</th>
+                  <th class="p-3">Target Segment</th>
+                  <th class="p-3">Status</th>
+                </tr>
+              </thead>
+              <tbody id="dataset-table-body" class="divide-y divide-slate-800/80 bg-slate-900/40">
+                <!-- Dynamically rendered -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 5: ANTI-GRAVITY PROMPT & DOCS ================= -->
+      <section id="pane-antigravity" class="tab-pane hidden space-y-6 max-w-5xl mx-auto">
+        <div class="bg-slate-900/90 border border-violet-500/30 rounded-xl p-6 shadow-xl">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+            <div class="flex items-center gap-3">
+              <div class="bg-violet-500/20 p-2 rounded-xl text-violet-400 border border-violet-500/30">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+                </svg>
+              </div>
+              <div>
+                <h2 class="text-lg font-bold text-white">Google Anti-Gravity / Multi-Agent Engineering Prompt</h2>
+                <p class="text-xs text-slate-400">Copy-ready master prompt for feed into agentic orchestration environments.</p>
+              </div>
+            </div>
+
+            <button
+              id="btn-copy-prompt"
+              class="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 active:bg-violet-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition shadow-lg shadow-violet-600/30"
+            >
+              <svg id="copy-icon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              <span id="copy-text">Copy Master Prompt</span>
+            </button>
+          </div>
+
+          <div class="space-y-4 text-xs text-slate-300">
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+              <h4 class="font-bold text-violet-400 mb-1 uppercase text-xs tracking-wider">Instructions for Data Analysts</h4>
+              <p class="leading-relaxed text-slate-300">
+                Copy the prompt block below and paste it directly into <strong>Google Anti-Gravity</strong>, <strong>LangGraph</strong>, or your preferred agent framework. It instructs the LLM agent to generate synthetic datasets, construct multi-touch Markov attribution models, and run linear optimization algorithms for budget allocation.
+              </p>
+            </div>
+
+            <!-- Formatted Prompt Output -->
+            <div class="relative">
+              <pre 
+                id="antigravity-prompt-code"
+                class="bg-slate-950 text-slate-200 font-mono text-xs p-5 rounded-xl border border-slate-800 overflow-x-auto whitespace-pre-wrap leading-relaxed select-all"
+>SYSTEM INSTRUCTION: You are an expert AI Marketing Data Scientist and Agentic Optimization System built to solve Marketing Budget Inefficiencies using Multi-Touch Attribution (MTA) and Dynamic Reallocation Algorithms.
+
+PROBLEM CONTEXT:
+A company is spending heavily across multiple marketing channels (Paid Search, Paid Social, Influencer, Email, Programmatic Display). Management cannot determine which campaigns generate truly profitable customers due to relying on flawed last-touch attribution models.
+
+YOUR CORE TASKS:
+1. SYNTHETIC DATA GENERATION:
+   - Generate a realistic tabular dataset of 1,000+ customer touchpoint journeys.
+   - Schema: Campaign_ID, Channel, Ad_Spend, Touchpoint_Sequence, Impression_Count, Conversion_Flag, CAC, LTV, Margin_Contribution.
+   - Include realistic inefficiencies: e.g., Programmatic Display high first-touch volume but extremely low actual conversion contribution.
+
+2. MULTI-TOUCH ATTRIBUTION (MTA) ENGINE:
+   - Calculate and compare First-Touch, Last-Touch, and Data-Driven (Markov Chain / Shapley Value) Attribution for each channel.
+   - Identify specific inefficient spend ($) where CAC exceeds LTV or ROAS &lt; 1.0.
+
+3. CONSTRAINED BUDGET REALLOCATION MODEL:
+   - Formulate a Linear/Convex Optimization problem:
+     * Objective: Maximize Total Net Revenue / Margin.
+     * Subject to: Budget Cap = $500,000; Channel Headroom constraints; Diminishing Marginal Returns logarithmic scaling.
+   - Output exact $ shift recommendations per channel (e.g., "Reallocate $65,000 from Display to Paid Search and Email").
+
+4. ACTIONABLE AGENT OUTPUT:
+   - Generate an executive summary highlighting baseline vs. optimized ROAS, Blended CAC reduction, and Net Profit Delta.
+   - Output structured JSON payload for downstream API execution.</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ================= LOGIC & INTERACTIONS SCRIPT ================= -->
+  <script>
+    // --- INITIAL DATA & CONSTANTS ---
+    const INITIAL_CHANNELS = [
+      { id: 'search', name: 'Paid Search (PPC)', currentSpend: 150000, roas: 3.2, cac: 45, ltv: 220, conversions: 3333, efficiencyScore: 88, status: 'Scale' },
+      { id: 'social', name: 'Paid Social (Meta/LinkedIn)', currentSpend: 130000, roas: 2.1, cac: 78, ltv: 195, conversions: 1666, efficiencyScore: 65, status: 'Optimize' },
+      { id: 'influencer', name: 'Influencer & Creators', currentSpend: 75000, roas: 2.8, cac: 52, ltv: 210, conversions: 1442, efficiencyScore: 81, status: 'Scale' },
+      { id: 'email', name: 'Email & CRM Lifecycle', currentSpend: 45000, roas: 5.4, cac: 18, ltv: 240, conversions: 2500, efficiencyScore: 96, status: 'Max Capacity' },
+      { id: 'display', name: 'Programmatic Display', currentSpend: 100000, roas: 0.9, cac: 142, ltv: 160, conversions: 704, efficiencyScore: 32, status: 'Cut Heavy' }
+    ];
+
+    const ATTRIBUTION_COMPARISON = [
+      { channel: 'Paid Search', firstTouch: 160000, lastTouch: 185000, dataDriven: 210000 },
+      { channel: 'Paid Social', firstTouch: 140000, lastTouch: 110000, dataDriven: 135000 },
+      { channel: 'Influencer', firstTouch: 95000, lastTouch: 60000, dataDriven: 88000 },
+      { channel: 'Email/CRM', firstTouch: 30000, lastTouch: 95000, dataDriven: 72000 },
+      { channel: 'Display Ads', firstTouch: 75000, lastTouch: 50000, dataDriven: 25000 }
+    ];
+
+    const HISTORICAL_TRENDS = [
+      { month: 'Jan', spend: 420000, revenue: 840000, roas: 2.0, cac: 68 },
+      { month: 'Feb', spend: 440000, revenue: 890000, roas: 2.02, cac: 66 },
+      { month: 'Mar', spend: 460000, revenue: 910000, roas: 1.97, cac: 70 },
+      { month: 'Apr', spend: 480000, revenue: 940000, roas: 1.95, cac: 72 },
+      { month: 'May', spend: 490000, revenue: 930000, roas: 1.89, cac: 75 },
+      { month: 'Jun (Current)', spend: 500000, revenue: 945000, roas: 1.89, cac: 77 },
+      { month: 'Jul (AI Proj)', spend: 500000, revenue: 1320000, roas: 2.64, cac: 54 },
+      { month: 'Aug (AI Proj)', spend: 500000, revenue: 1450000, roas: 2.90, cac: 49 },
+      { month: 'Sep (AI Proj)', spend: 500000, revenue: 1600000, roas: 3.20, cac: 44 }
+    ];
+
+    const RAW_CAMPAIGNS = [
+      { id: 'CMP-8091', channel: 'Paid Search', campaign: 'Google_NonBrand_HighIntent', spend: 65000, roas: 3.8, cac: 42, ltv: 240, status: 'Profitable', region: 'North America', tier: 'Enterprise' },
+      { id: 'CMP-8092', channel: 'Paid Search', campaign: 'Google_Brand_Defense', spend: 35000, roas: 6.2, cac: 15, ltv: 260, status: 'Highly Profitable', region: 'Global', tier: 'All' },
+      { id: 'CMP-8093', channel: 'Paid Social', campaign: 'Meta_Lookalike_1percent', spend: 50000, roas: 2.4, cac: 62, ltv: 190, status: 'Profitable', region: 'North America', tier: 'SMB' },
+      { id: 'CMP-8094', channel: 'Paid Social', campaign: 'LinkedIn_Retargeting_V2', spend: 45000, roas: 1.5, cac: 110, ltv: 210, status: 'Unprofitable', region: 'Europe', tier: 'Enterprise' },
+      { id: 'CMP-8095', channel: 'Display', campaign: 'Programmatic_Banner_Broad', spend: 60000, roas: 0.6, cac: 185, ltv: 140, status: 'Critical Drain', region: 'Global', tier: 'B2C' },
+      { id: 'CMP-8096', channel: 'Display', campaign: 'Retargeting_Native_Content', spend: 40000, roas: 1.35, cac: 92, ltv: 170, status: 'Unprofitable', region: 'North America', tier: 'SMB' },
+      { id: 'CMP-8097', channel: 'Influencer', campaign: 'YouTube_Tech_Reviewers', spend: 45000, roas: 3.4, cac: 44, ltv: 230, status: 'Highly Profitable', region: 'North America', tier: 'SMB' },
+      { id: 'CMP-8098', channel: 'Influencer', campaign: 'Newsletter_Sponsorships', spend: 30000, roas: 2.1, cac: 64, ltv: 195, status: 'Profitable', region: 'Europe', tier: 'Enterprise' },
+      { id: 'CMP-8099', channel: 'Email', campaign: 'Automated_Drip_Onboarding', spend: 20000, roas: 8.5, cac: 12, ltv: 280, status: 'Highly Profitable', region: 'Global', tier: 'All' },
+      { id: 'CMP-8100', channel: 'Email', campaign: 'Winback_Inactive_30Days', spend: 25000, roas: 4.2, cac: 24, ltv: 210, status: 'Highly Profitable', region: 'Global', tier: 'All' }
+    ];
+
+    const INITIAL_RECOMMENDATIONS = [
+      {
+        id: 'REC-101',
+        severity: 'high',
+        title: 'Slash Programmatic Display Budget by $65,000',
+        description: 'Data-driven attribution reveals Display ads have an actual marginal ROAS of only 0.4x with a high CAC ($142). Reallocate capital to higher velocity channels.',
+        impact: '+$115,000 Revenue / -$18 Blended CAC',
+        action: 'reduce_display',
+        applied: false
+      },
+      {
+        id: 'REC-102',
+        severity: 'medium',
+        title: 'Scale Paid Search High-Intent Keywords by 40%',
+        description: 'Paid Search is operating near peak marginal return (3.2x ROAS). Search volume queries indicate headroom for $45,000 additional spend in US/EU markets.',
+        impact: '+$144,000 Revenue',
+        action: 'scale_search',
+        applied: false
+      },
+      {
+        id: 'REC-103',
+        severity: 'medium',
+        title: 'Double Email Lifecycle & Retargeting Infrastructure',
+        description: 'Email lifecycle exhibits an astounding 5.4x ROAS and $18 CAC. Allocate $20,000 extra budget towards dynamic personalized win-back workflows.',
+        impact: '+$108,000 Revenue / +28% LTV Retention',
+        action: 'scale_email',
+        applied: false
+      }
+    ];
+
+    // --- APPLICATION STATE ---
+    let state = {
+      activeTab: 'overview',
+      channelBudgets: {},
+      recommendations: JSON.parse(JSON.stringify(INITIAL_RECOMMENDATIONS)),
+      searchFilter: '',
+      selectedSegment: 'All'
+    };
+
+    function initBudgets() {
+      state.channelBudgets = {};
+      INITIAL_CHANNELS.forEach(c => {
+        state.channelBudgets[c.id] = c.currentSpend;
+      });
+    }
+    initBudgets();
+
+    // --- CALCULATION ENGINE ---
+    function calculateSimulation() {
+      let totalBudget = 0;
+      let projectedRev = 0;
+      let totalConversions = 0;
+
+      INITIAL_CHANNELS.forEach(ch => {
+        const spend = state.channelBudgets[ch.id];
+        totalBudget += spend;
+
+        // Diminishing returns logarithmic curve
+        const ratio = spend / ch.currentSpend;
+        const efficiencyMultiplier = Math.pow(ratio, -0.25);
+        const effectiveRoas = ch.roas * Math.max(0.4, efficiencyMultiplier);
+
+        const rev = spend * effectiveRoas;
+        const convs = Math.round(rev / (ch.ltv * 0.8));
+
+        projectedRev += rev;
+        totalConversions += convs;
+      });
+
+      const baselineSpend = 500000;
+      const baselineRev = 945000;
+      const baselineRoas = 1.89;
+
+      const projectedRoas = totalBudget > 0 ? (projectedRev / totalBudget) : 0;
+      const projectedCac = Math.round(totalBudget / (totalConversions || 1));
+      const profit = projectedRev - totalBudget;
+      const netProfitChange = profit - (baselineRev - baselineSpend);
+
+      return {
+        totalBudget,
+        projectedRev,
+        projectedRoas,
+        projectedCac,
+        profit,
+        netProfitChange,
+        totalConversions
+      };
+    }
+
+    // --- RENDER FUNCTIONS ---
+
+    function updateMetricCards() {
+      const sim = calculateSimulation();
+
+      // Top Overview Bar
+      document.getElementById('stat-total-budget').textContent = `$${sim.totalBudget.toLocaleString()}`;
+      document.getElementById('stat-projected-rev').textContent = `$${Math.round(sim.projectedRev).toLocaleString()}`;
+      
+      const revDelta = Math.round(sim.projectedRev - 945000);
+      const revDeltaEl = document.getElementById('stat-rev-delta');
+      revDeltaEl.className = `text-xs mt-1 flex items-center gap-1 font-semibold ${revDelta >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+      revDeltaEl.innerHTML = `
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <line x1="7" y1="17" x2="17" y2="7"/>
+          <polyline points="7 7 17 7 17 17"/>
+        </svg>
+        <span>${revDelta >= 0 ? '+' : ''}$${revDelta.toLocaleString()} vs Baseline</span>
+      `;
+
+      document.getElementById('stat-blended-roas').textContent = `${sim.projectedRoas.toFixed(2)}x`;
+
+      // Simulator Bar
+      document.getElementById('sim-total-budget').textContent = `$${sim.totalBudget.toLocaleString()}`;
+      document.getElementById('sim-projected-rev').textContent = `$${Math.round(sim.projectedRev).toLocaleString()}`;
+      document.getElementById('sim-projected-roas').textContent = `${sim.projectedRoas.toFixed(2)}x`;
+      
+      const profitEl = document.getElementById('sim-profit-change');
+      const isPositive = sim.netProfitChange >= 0;
+      profitEl.className = `text-xl font-black ${isPositive ? 'text-emerald-400' : 'text-rose-400'}`;
+      profitEl.textContent = `${isPositive ? '+' : ''}$${Math.round(sim.netProfitChange).toLocaleString()}`;
+    }
+
+    function renderRecommendations() {
+      const container = document.getElementById('recommendations-container');
+      container.innerHTML = '';
+
+      state.recommendations.forEach(rec => {
+        const item = document.createElement('div');
+        item.className = `p-3 rounded-lg border text-xs transition ${
+          rec.applied 
+            ? 'bg-emerald-950/20 border-emerald-500/30 text-slate-400' 
+            : 'bg-slate-800/60 border-slate-700/80 hover:border-slate-600'
+        }`;
+
+        item.innerHTML = `
+          <div class="flex justify-between items-start gap-2 mb-1">
+            <h4 class="font-bold text-slate-200">${rec.title}</h4>
+            ${rec.applied 
+              ? `<span class="text-xs text-emerald-400 font-semibold flex items-center gap-1 shrink-0">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Applied
+                 </span>`
+              : `<span class="text-xs bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded font-medium shrink-0">
+                  Action Required
+                 </span>`
+            }
+          </div>
+          <p class="text-xs text-slate-400 mb-2 leading-relaxed">${rec.description}</p>
+          <div class="flex items-center justify-between pt-1 border-t border-slate-700/50">
+            <span class="text-xs text-emerald-400 font-semibold">${rec.impact}</span>
+            ${!rec.applied 
+              ? `<button 
+                  data-rec-id="${rec.id}" 
+                  class="btn-apply-rec bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-slate-950 px-2.5 py-1 rounded font-bold text-xs transition">
+                  Apply Shift
+                 </button>`
+              : ''
+            }
+          </div>
+        `;
+        container.appendChild(item);
+      });
+
+      // Bind apply buttons
+      container.querySelectorAll('.btn-apply-rec').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const recId = btn.getAttribute('data-rec-id');
+          applyRecommendation(recId);
+        });
+      });
+    }
+
+    function applyRecommendation(recId) {
+      const rec = state.recommendations.find(r => r.id === recId);
+      if (!rec || rec.applied) return;
+
+      rec.applied = true;
+      if (rec.action === 'reduce_display') {
+        state.channelBudgets.display = Math.max(15000, state.channelBudgets.display - 65000);
+        state.channelBudgets.search += 45000;
+        state.channelBudgets.email += 20000;
+      } else if (rec.action === 'scale_search') {
+        state.channelBudgets.search += 40000;
+      } else if (rec.action === 'scale_email') {
+        state.channelBudgets.email += 20000;
+      }
+
+      updateAllViews();
+    }
+
+    function renderOverviewChannelTable() {
+      const tbody = document.getElementById('overview-channel-rows');
+      tbody.innerHTML = '';
+
+      INITIAL_CHANNELS.forEach(ch => {
+        const ltvCacRatio = (ch.ltv / ch.cac).toFixed(1);
+        const currentSpend = state.channelBudgets[ch.id];
+        const statusBadgeClass = (ch.status === 'Scale' || ch.status === 'Max Capacity')
+          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+          : (ch.status === 'Cut Heavy')
+          ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+          : 'bg-amber-500/10 text-amber-400 border border-amber-500/20';
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-800/40 transition';
+        tr.innerHTML = `
+          <td class="p-3 font-semibold text-white">${ch.name}</td>
+          <td class="p-3">$${currentSpend.toLocaleString()}</td>
+          <td class="p-3 font-semibold text-emerald-400">${ch.roas}x</td>
+          <td class="p-3">$${ch.cac}</td>
+          <td class="p-3">$${ch.ltv}</td>
+          <td class="p-3 font-bold">
+            <span class="${ltvCacRatio >= 4 ? 'text-emerald-400' : ltvCacRatio < 2 ? 'text-rose-400' : 'text-slate-200'}">
+              ${ltvCacRatio}x
+            </span>
+          </td>
+          <td class="p-3">
+            <span class="px-2 py-0.5 rounded-full text-xs font-bold border ${statusBadgeClass}">
+              ${ch.status}
+            </span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderSimulatorSliders() {
+      const container = document.getElementById('simulator-sliders-container');
+      container.innerHTML = '';
+
+      INITIAL_CHANNELS.forEach(ch => {
+        const currentVal = state.channelBudgets[ch.id];
+        const diff = currentVal - ch.currentSpend;
+        const diffBadge = diff !== 0 
+          ? `<span class="text-xs px-2 py-0.5 rounded font-bold ${diff > 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">
+               ${diff > 0 ? '+' + diff.toLocaleString() : diff.toLocaleString()}
+             </span>`
+          : '';
+
+        const item = document.createElement('div');
+        item.className = 'bg-slate-950/60 p-4 rounded-xl border border-slate-800/80';
+        item.innerHTML = `
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+            <div>
+              <span class="font-bold text-sm text-white">${ch.name}</span>
+              <span class="text-xs text-slate-400 ml-2">(Baseline: $${ch.currentSpend.toLocaleString()})</span>
+            </div>
+            <div class="flex items-center gap-3 text-xs font-semibold">
+              <span class="text-slate-400">Allocated:</span>
+              <span class="text-emerald-400 font-bold text-sm" id="slider-val-${ch.id}">$${currentVal.toLocaleString()}</span>
+              <span id="slider-diff-${ch.id}">${diffBadge}</span>
+            </div>
+          </div>
+          <input 
+            type="range"
+            min="0"
+            max="250000"
+            step="5000"
+            value="${currentVal}"
+            data-channel="${ch.id}"
+            class="slider-input w-full accent-emerald-500 bg-slate-800 h-2 rounded-lg cursor-pointer"
+          />
+          <div class="flex justify-between text-xs text-slate-500 mt-1">
+            <span>$0</span>
+            <span>$125,000</span>
+            <span>$250,000</span>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+
+      // Bind input events
+      container.querySelectorAll('.slider-input').forEach(slider => {
+        slider.addEventListener('input', (e) => {
+          const chId = e.target.getAttribute('data-channel');
+          const val = Number(e.target.value);
+          state.channelBudgets[chId] = val;
+
+          // Update label and delta
+          const ch = INITIAL_CHANNELS.find(c => c.id === chId);
+          document.getElementById(`slider-val-${chId}`).textContent = `$${val.toLocaleString()}`;
+          const diff = val - ch.currentSpend;
+          const diffEl = document.getElementById(`slider-diff-${chId}`);
+          if (diff !== 0) {
+            diffEl.innerHTML = `<span class="text-xs px-2 py-0.5 rounded font-bold ${diff > 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">
+              ${diff > 0 ? '+' + diff.toLocaleString() : diff.toLocaleString()}
+            </span>`;
+          } else {
+            diffEl.innerHTML = '';
+          }
+
+          updateMetricCards();
+          renderOverviewChannelTable();
+        });
+      });
+    }
+
+    function renderDatasetTable() {
+      const tbody = document.getElementById('dataset-table-body');
+      tbody.innerHTML = '';
+
+      const query = state.searchFilter.toLowerCase();
+      const segment = state.selectedSegment;
+
+      const filtered = RAW_CAMPAIGNS.filter(item => {
+        const matchesSearch = item.campaign.toLowerCase().includes(query) || 
+                              item.channel.toLowerCase().includes(query);
+        const matchesSegment = segment === 'All' || item.tier === segment || item.tier === 'All';
+        return matchesSearch && matchesSegment;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-500 text-xs">No matching campaigns found.</td></tr>`;
+        return;
+      }
+
+      filtered.forEach(row => {
+        const statusClass = (row.status.includes('Highly') || row.status === 'Profitable')
+          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+          : row.status === 'Unprofitable'
+          ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+          : 'bg-rose-500/10 text-rose-400 border border-rose-500/20';
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-800/50 transition';
+        tr.innerHTML = `
+          <td class="p-3 font-mono text-indigo-300 text-xs">${row.id}</td>
+          <td class="p-3 font-medium text-slate-200">${row.channel}</td>
+          <td class="p-3 text-slate-300 font-mono text-xs">${row.campaign}</td>
+          <td class="p-3 font-semibold text-white">$${row.spend.toLocaleString()}</td>
+          <td class="p-3 font-semibold text-emerald-400">${row.roas}x</td>
+          <td class="p-3">$${row.cac}</td>
+          <td class="p-3">$${row.ltv}</td>
+          <td class="p-3"><span class="bg-slate-800 px-2 py-0.5 rounded text-xs text-slate-300">${row.tier}</span></td>
+          <td class="p-3">
+            <span class="px-2 py-0.5 rounded-full text-xs font-bold border ${statusClass}">
+              ${row.status}
+            </span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // --- CHART GENERATION (SELF-CONTAINED SVG) ---
+
+    // 1. Revenue & Spend Area Chart
+    function renderHistoricalChart() {
+      const container = document.getElementById('historical-chart-container');
+      const width = container.clientWidth || 600;
+      const height = container.clientHeight || 256;
+      const padding = { top: 20, right: 20, bottom: 35, left: 55 };
+
+      const chartW = width - padding.left - padding.right;
+      const chartH = height - padding.top - padding.bottom;
+
+      const maxVal = 1800000;
+      const data = HISTORICAL_TRENDS;
+
+      const getX = (i) => padding.left + (i / (data.length - 1)) * chartW;
+      const getY = (val) => padding.top + chartH - (val / maxVal) * chartH;
+
+      // Construct path points
+      let revPoints = data.map((d, i) => `${getX(i)},${getY(d.revenue)}`).join(' ');
+      let spendPoints = data.map((d, i) => `${getX(i)},${getY(d.spend)}`).join(' ');
+
+      let revAreaPath = `M ${getX(0)},${getY(0)} ` + 
+        data.map((d, i) => `L ${getX(i)},${getY(d.revenue)}`).join(' ') + 
+        ` L ${getX(data.length - 1)},${getY(0)} Z`;
+
+      let spendAreaPath = `M ${getX(0)},${getY(0)} ` + 
+        data.map((d, i) => `L ${getX(i)},${getY(d.spend)}`).join(' ') + 
+        ` L ${getX(data.length - 1)},${getY(0)} Z`;
+
+      // Y-axis tick values
+      const yTicks = [0, 450000, 900000, 1350000, 1800000];
+
+      let svgHtml = `
+        <svg width="100%" height="100%" viewBox="0 0 ${width} ${height}" class="overflow-visible select-none">
+          <defs>
+            <linearGradient id="gradRev" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#10b981" stop-opacity="0.45"/>
+              <stop offset="100%" stop-color="#10b981" stop-opacity="0.0"/>
+            </linearGradient>
+            <linearGradient id="gradSpend" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#6366f1" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#6366f1" stop-opacity="0.0"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Grid Lines & Y Labels -->
+          ${yTicks.map(val => {
+            const yPos = getY(val);
+            return `
+              <line x1="${padding.left}" y1="${yPos}" x2="${width - padding.right}" y2="${yPos}" stroke="#1e293b" stroke-dasharray="3,3" />
+              <text x="${padding.left - 8}" y="${yPos + 4}" fill="#64748b" font-size="11" text-anchor="end" font-family="sans-serif">
+                $${val / 1000}k
+              </text>
+            `;
+          }).join('')}
+
+          <!-- X Labels -->
+          ${data.map((d, i) => {
+            const xPos = getX(i);
+            return `
+              <text x="${xPos}" y="${height - 10}" fill="#64748b" font-size="11" text-anchor="middle" font-family="sans-serif">
+                ${d.month}
+              </text>
+            `;
+          }).join('')}
+
+          <!-- Areas -->
+          <path d="${revAreaPath}" fill="url(#gradRev)" />
+          <path d="${spendAreaPath}" fill="url(#gradSpend)" />
+
+          <!-- Polylines -->
+          <polyline fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" points="${spendPoints}" />
+          <polyline fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" points="${revPoints}" />
+
+          <!-- Points -->
+          ${data.map((d, i) => `
+            <circle cx="${getX(i)}" cy="${getY(d.spend)}" r="3.5" fill="#6366f1" stroke="#0f172a" stroke-width="2" />
+            <circle cx="${getX(i)}" cy="${getY(d.revenue)}" r="3.5" fill="#10b981" stroke="#0f172a" stroke-width="2" />
+          `).join('')}
+
+          <!-- Overlay zones for mouseover hover -->
+          ${data.map((d, i) => {
+            const xPos = getX(i);
+            const w = chartW / data.length;
+            return `
+              <rect x="${xPos - w/2}" y="${padding.top}" width="${w}" height="${chartH}" fill="transparent" class="cursor-pointer hover-trigger" data-index="${i}"/>
+            `;
+          }).join('')}
+        </svg>
+
+        <div id="chart1-tooltip" class="chart-tooltip absolute hidden bg-slate-900 border border-slate-700 shadow-xl rounded-lg p-2.5 text-xs text-slate-200 z-20">
+        </div>
+      `;
+
+      container.innerHTML = svgHtml;
+
+      // Tooltip interaction
+      const tooltip = document.getElementById('chart1-tooltip');
+      container.querySelectorAll('.hover-trigger').forEach(el => {
+        el.addEventListener('mouseenter', (e) => {
+          const idx = Number(el.getAttribute('data-index'));
+          const item = data[idx];
+          tooltip.innerHTML = `
+            <div class="font-bold text-white mb-1">${item.month}</div>
+            <div class="text-emerald-400 font-semibold">Revenue: $${item.revenue.toLocaleString()}</div>
+            <div class="text-indigo-400 font-semibold">Ad Spend: $${item.spend.toLocaleString()}</div>
+            <div class="text-slate-400 text-xs mt-0.5">ROAS: ${item.roas}x | CAC: $${item.cac}</div>
+          `;
+          tooltip.classList.remove('hidden');
+        });
+
+        el.addEventListener('mousemove', (e) => {
+          const rect = container.getBoundingClientRect();
+          let left = e.clientX - rect.left + 15;
+          let top = e.clientY - rect.top - 40;
+          if (left + 140 > rect.width) left -= 150;
+          tooltip.style.left = `${left}px`;
+          tooltip.style.top = `${top}px`;
+        });
+
+        el.addEventListener('mouseleave', () => {
+          tooltip.classList.add('hidden');
+        });
+      });
+    }
+
+    // 2. Attribution Discrepancy Grouped Bar Chart
+    function renderAttributionChart() {
+      const container = document.getElementById('attribution-chart-container');
+      const width = container.clientWidth || 700;
+      const height = container.clientHeight || 320;
+      const padding = { top: 25, right: 25, bottom: 40, left: 60 };
+
+      const chartW = width - padding.left - padding.right;
+      const chartH = height - padding.top - padding.bottom;
+
+      const maxVal = 250000;
+      const data = ATTRIBUTION_COMPARISON;
+      const groupWidth = chartW / data.length;
+      const barWidth = Math.min(22, (groupWidth - 24) / 3);
+
+      const yTicks = [0, 50000, 100000, 150000, 200000, 250000];
+      const getY = (val) => padding.top + chartH - (val / maxVal) * chartH;
+
+      let barsHtml = '';
+      data.forEach((d, i) => {
+        const groupCenterX = padding.left + i * groupWidth + groupWidth / 2;
+        const b1X = groupCenterX - barWidth * 1.5 - 2;
+        const b2X = groupCenterX - barWidth * 0.5;
+        const b3X = groupCenterX + barWidth * 0.5 + 2;
+
+        const h1 = (d.firstTouch / maxVal) * chartH;
+        const h2 = (d.lastTouch / maxVal) * chartH;
+        const h3 = (d.dataDriven / maxVal) * chartH;
+
+        barsHtml += `
+          <!-- First Touch -->
+          <rect x="${b1X}" y="${getY(d.firstTouch)}" width="${barWidth}" height="${h1}" rx="3" fill="#6366f1" class="bar-elem" data-info="First-Touch: $${d.firstTouch.toLocaleString()}"/>
+          <!-- Last Touch -->
+          <rect x="${b2X}" y="${getY(d.lastTouch)}" width="${barWidth}" height="${h2}" rx="3" fill="#38bdf8" class="bar-elem" data-info="Last-Touch: $${d.lastTouch.toLocaleString()}"/>
+          <!-- Data-Driven -->
+          <rect x="${b3X}" y="${getY(d.dataDriven)}" width="${barWidth}" height="${h3}" rx="3" fill="#10b981" class="bar-elem" data-info="AI Data-Driven: $${d.dataDriven.toLocaleString()}"/>
+
+          <!-- Label -->
+          <text x="${groupCenterX}" y="${height - 12}" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="sans-serif" font-weight="500">
+            ${d.channel}
+          </text>
+        `;
+      });
+
+      let svgHtml = `
+        <svg width="100%" height="100%" viewBox="0 0 ${width} ${height}" class="overflow-visible select-none">
+          <!-- Grid Lines & Y Labels -->
+          ${yTicks.map(val => {
+            const yPos = getY(val);
+            return `
+              <line x1="${padding.left}" y1="${yPos}" x2="${width - padding.right}" y2="${yPos}" stroke="#1e293b" stroke-dasharray="3,3" />
+              <text x="${padding.left - 8}" y="${yPos + 4}" fill="#64748b" font-size="11" text-anchor="end" font-family="sans-serif">
+                $${val / 1000}k
+              </text>
+            `;
+          }).join('')}
+
+          ${barsHtml}
+        </svg>
+
+        <div id="chart2-tooltip" class="chart-tooltip absolute hidden bg-slate-900 border border-slate-700 shadow-xl rounded-lg p-2.5 text-xs text-slate-200 z-20">
+        </div>
+      `;
+
+      container.innerHTML = svgHtml;
+
+      const tooltip = document.getElementById('chart2-tooltip');
+      container.querySelectorAll('.bar-elem').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          tooltip.textContent = el.getAttribute('data-info');
+          tooltip.classList.remove('hidden');
+        });
+        el.addEventListener('mousemove', (e) => {
+          const rect = container.getBoundingClientRect();
+          let left = e.clientX - rect.left + 15;
+          let top = e.clientY - rect.top - 35;
+          tooltip.style.left = `${left}px`;
+          tooltip.style.top = `${top}px`;
+        });
+        el.addEventListener('mouseleave', () => {
+          tooltip.classList.add('hidden');
+        });
+      });
+    }
+
+    // 3. ROAS vs CAC Scatter Matrix
+    function renderMatrixChart() {
+      const container = document.getElementById('matrix-chart-container');
+      const width = container.clientWidth || 380;
+      const height = container.clientHeight || 256;
+      const padding = { top: 20, right: 30, bottom: 35, left: 45 };
+
+      const chartW = width - padding.left - padding.right;
+      const chartH = height - padding.top - padding.bottom;
+
+      const maxCac = 160;
+      const maxRoas = 6.0;
+
+      const getX = (cac) => padding.left + (cac / maxCac) * chartW;
+      const getY = (roas) => padding.top + chartH - (roas / maxRoas) * chartH;
+
+      const bubblesHtml = INITIAL_CHANNELS.map(ch => {
+        const cx = getX(ch.cac);
+        const cy = getY(ch.roas);
+        const r = 8 + (ch.currentSpend / 150000) * 10;
+        const color = ch.roas < 1.0 ? '#f43f5e' : (ch.roas > 3.0 ? '#10b981' : '#f59e0b');
+
+        return `
+          <circle cx="${cx}" cy="${cy}" r="${r}" fill="${color}" fill-opacity="0.85" stroke="#0f172a" stroke-width="2" class="scatter-bubble cursor-pointer" data-id="${ch.id}"/>
+          <text x="${cx}" y="${cy - r - 4}" fill="#cbd5e1" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">
+            ${ch.id.toUpperCase()}
+          </text>
+        `;
+      }).join('');
+
+      let svgHtml = `
+        <svg width="100%" height="100%" viewBox="0 0 ${width} ${height}" class="overflow-visible select-none">
+          <!-- Background Quadrants -->
+          <rect x="${padding.left}" y="${padding.top}" width="${chartW/2}" height="${chartH/2}" fill="#10b981" fill-opacity="0.05" />
+          <text x="${padding.left + 8}" y="${padding.top + 16}" fill="#10b981" font-size="10" font-weight="bold">HIGH ROAS / LOW CAC</text>
+
+          <line x1="${padding.left}" y1="${getY(3.0)}" x2="${width - padding.right}" y2="${getY(3.0)}" stroke="#334155" stroke-dasharray="2,2"/>
+          <line x1="${getX(80)}" y1="${padding.top}" x2="${getX(80)}" y2="${height - padding.bottom}" stroke="#334155" stroke-dasharray="2,2"/>
+
+          <!-- Axes -->
+          <line x1="${padding.left}" y1="${height - padding.bottom}" x2="${width - padding.right}" y2="${height - padding.bottom}" stroke="#475569" stroke-width="1"/>
+          <line x1="${padding.left}" y1="${padding.top}" x2="${padding.left}" y2="${height - padding.bottom}" stroke="#475569" stroke-width="1"/>
+
+          <!-- Axis Labels -->
+          <text x="${width/2}" y="${height - 8}" fill="#64748b" font-size="11" text-anchor="middle" font-family="sans-serif">CAC ($)</text>
+          <text x="12" y="${height/2}" fill="#64748b" font-size="11" text-anchor="middle" transform="rotate(-90 12 ${height/2})" font-family="sans-serif">ROAS (x)</text>
+
+          ${bubblesHtml}
+        </svg>
+
+        <div id="chart3-tooltip" class="chart-tooltip absolute hidden bg-slate-900 border border-slate-700 shadow-xl rounded-lg p-2.5 text-xs text-slate-200 z-20">
+        </div>
+      `;
+
+      container.innerHTML = svgHtml;
+
+      const tooltip = document.getElementById('chart3-tooltip');
+      container.querySelectorAll('.scatter-bubble').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          const chId = el.getAttribute('data-id');
+          const ch = INITIAL_CHANNELS.find(c => c.id === chId);
+          tooltip.innerHTML = `
+            <div class="font-bold text-white mb-0.5">${ch.name}</div>
+            <div class="text-emerald-400 font-semibold">ROAS: ${ch.roas}x</div>
+            <div class="text-slate-300">CAC: $${ch.cac} | LTV: $${ch.ltv}</div>
+            <div class="text-slate-400 text-xs mt-0.5">Spend: $${ch.currentSpend.toLocaleString()}</div>
+          `;
+          tooltip.classList.remove('hidden');
+        });
+        el.addEventListener('mousemove', (e) => {
+          const rect = container.getBoundingClientRect();
+          let left = e.clientX - rect.left + 15;
+          let top = e.clientY - rect.top - 40;
+          if (left + 150 > rect.width) left -= 160;
+          tooltip.style.left = `${left}px`;
+          tooltip.style.top = `${top}px`;
+        });
+        el.addEventListener('mouseleave', () => {
+          tooltip.classList.add('hidden');
+        });
+      });
+    }
+
+    // --- REFRESH ALL VIEWS ---
+    function updateAllViews() {
+      updateMetricCards();
+      renderRecommendations();
+      renderOverviewChannelTable();
+      renderSimulatorSliders();
+      renderDatasetTable();
+      renderHistoricalChart();
+      renderAttributionChart();
+      renderMatrixChart();
+    }
+
+    // --- RESET FUNCTION ---
+    function resetAll() {
+      initBudgets();
+      state.recommendations = JSON.parse(JSON.stringify(INITIAL_RECOMMENDATIONS));
+      updateAllViews();
+    }
+
+    // --- TAB SWITCHING ---
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.getAttribute('data-tab');
+        state.activeTab = tab;
+
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          b.className = 'tab-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left text-slate-400 hover:bg-slate-800/60 hover:text-slate-200';
+        });
+
+        if (tab === 'antigravity') {
+          btn.className = 'tab-btn active flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left bg-violet-500/10 text-violet-400 border border-violet-500/30';
+        } else {
+          btn.className = 'tab-btn active flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
+        }
+
+        document.querySelectorAll('.tab-pane').forEach(pane => {
+          pane.classList.add('hidden');
+        });
+        document.getElementById(`pane-${tab}`).classList.remove('hidden');
+
+        // Re-render responsive charts when switching tabs
+        if (tab === 'overview') {
+          setTimeout(renderHistoricalChart, 20);
+        } else if (tab === 'attribution') {
+          setTimeout(() => {
+            renderAttributionChart();
+            renderMatrixChart();
+          }, 20);
+        }
+      });
+    });
+
+    // --- GLOBAL BUTTONS & FILTERS ---
+    document.getElementById('btn-reset-global').addEventListener('click', resetAll);
+    document.getElementById('btn-reset-simulator').addEventListener('click', resetAll);
+
+    // Search and Filter in Dataset
+    document.getElementById('input-dataset-search').addEventListener('input', (e) => {
+      state.searchFilter = e.target.value;
+      renderDatasetTable();
+    });
+
+    document.getElementById('select-dataset-segment').addEventListener('change', (e) => {
+      state.selectedSegment = e.target.value;
+      renderDatasetTable();
+    });
+
+    // Export JSON
+    document.getElementById('btn-export-json').addEventListener('click', () => {
+      const jsonStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(RAW_CAMPAIGNS, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", jsonStr);
+      downloadAnchor.setAttribute("download", "synthetic_marketing_data.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    });
+
+    // Copy Prompt Button
+    document.getElementById('btn-copy-prompt').addEventListener('click', () => {
+      const code = document.getElementById('antigravity-prompt-code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const copyText = document.getElementById('copy-text');
+        const copyIcon = document.getElementById('copy-icon');
+        copyText.textContent = 'Copied to Clipboard!';
+        copyIcon.innerHTML = `<polyline points="20 6 9 17 4 12"/>`;
+        setTimeout(() => {
+          copyText.textContent = 'Copy Master Prompt';
+          copyIcon.innerHTML = `
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          `;
+        }, 2500);
+      });
+    });
+
+    // Window resize handler for charts
+    window.addEventListener('resize', () => {
+      if (state.activeTab === 'overview') {
+        renderHistoricalChart();
+      } else if (state.activeTab === 'attribution') {
+        renderAttributionChart();
+        renderMatrixChart();
+      }
+    });
+
+    // Initial Mount
+    updateAllViews();
+  </script>
+</body>
+</html>
